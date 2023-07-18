@@ -8,13 +8,14 @@ import { Input } from "../../../components/inputs";
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod";
 import { v4 as uuidV4 } from 'uuid'
-import { storage } from '../../../services/firebaseConnection'
+import { storage, db } from '../../../services/firebaseConnection'
 import {
     ref,
     uploadBytes,
     getDownloadURL,
     deleteObject
 } from 'firebase/storage'
+import { addDoc, collection } from 'firebase/firestore'
 
 const schema = z.object({
     name: z.string().nonempty("O campo nome é obrigatório."),
@@ -68,7 +69,7 @@ export function New() {
         if (carImages.length >= 2) {
             alert('Você atingiu o limite máximo de imagens.');
             return;
-          }
+        }
         const currentUid = user?.uid;
         const uidImage = uuidV4();
         const uploadRef = ref(storage, `images/${currentUid}/${uidImage}`)
@@ -89,7 +90,35 @@ export function New() {
     }
 
     function onSubmit(data: FormData) {
-        console.log(data)
+
+        const carListImages = carImages.map( car => {
+            return {
+                uid: car.uid,
+                name: car.name,
+                url: car.url
+            }
+        })
+
+        addDoc(collection(db, 'cars'), {
+            name: data.name,
+            model: data.model,
+            whatsapp: data.whatsapp,
+            city: data.city,
+            year: data.year,
+            km: data.km,
+            price: data.price,
+            description: data.description,
+            created: new Date(),
+            owner: user?.name,
+            user: user?.uid,
+            images: carListImages
+        }).then(() => {
+            console.log('Cadastrado com sucesso!!')
+            reset();
+            setCarImage([])
+        }).catch((error) => {
+            console.log(error, 'Erro ao cadastrar')
+        })
     }
 
     async function handleDeleteImage(item: ImageItemProps) {
