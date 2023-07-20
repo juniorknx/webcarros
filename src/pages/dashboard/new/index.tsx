@@ -110,7 +110,7 @@ export function New() {
             description: data.description,
             created: new Date(),
             owner: user?.name,
-            user: user?.uid,
+            uid: user?.uid,
             images: carListImages
         }).then(() => {
             console.log('Cadastrado com sucesso!!')
