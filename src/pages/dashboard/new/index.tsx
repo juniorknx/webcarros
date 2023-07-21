@@ -66,7 +66,7 @@ export function New() {
             return
         }
 
-        if (carImages.length >= 2) {
+        if (carImages.length >= 6) {
             alert('Você atingiu o limite máximo de imagens.');
             return;
         }
