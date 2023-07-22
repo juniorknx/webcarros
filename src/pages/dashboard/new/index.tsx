@@ -16,6 +16,7 @@ import {
     deleteObject
 } from 'firebase/storage'
 import { addDoc, collection } from 'firebase/firestore'
+import { toast } from "react-hot-toast";
 
 const schema = z.object({
     name: z.string().nonempty("O campo nome é obrigatório."),
@@ -67,7 +68,7 @@ export function New() {
         }
 
         if (carImages.length >= 6) {
-            alert('Você atingiu o limite máximo de imagens.');
+            toast.error('Você atingiu o limite máximo de imagens.')
             return;
         }
         const currentUid = user?.uid;
@@ -85,6 +86,7 @@ export function New() {
                     }
 
                     setCarImage((images) => [...images, imageItem])
+                    toast.success('Imagens cadastradas com sucesso.')
                 })
             })
     }
@@ -113,11 +115,12 @@ export function New() {
             uid: user?.uid,
             images: carListImages
         }).then(() => {
-            console.log('Cadastrado com sucesso!!')
+            toast.success('Cadastrado com sucesso!')
             reset();
             setCarImage([])
         }).catch((error) => {
             console.log(error, 'Erro ao cadastrar')
+            toast.error('Erro ao cadastrar veículo.')
         })
     }
 
