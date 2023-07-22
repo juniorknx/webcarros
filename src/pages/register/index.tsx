@@ -10,6 +10,7 @@ import { auth } from '../../services/firebaseConnection'
 import { createUserWithEmailAndPassword, updateProfile, signOut } from 'firebase/auth'
 import { AuthContext } from '../../contexts/AuthContext'
 import { useContext } from 'react'
+import toast from 'react-hot-toast'
 
 const schema = z.object({
     name: z.string().nonempty("O campo é obrigatório"),
@@ -50,8 +51,10 @@ export function Register() {
             })
 
             console.log('Cadastrado com sucesso');
+            toast.success('Cadastro concluído, Bem Vindo!')
             navigate('/dashboard');
         } catch (error) {
+            toast.error('Erro ao Cadastrar.')
             console.log('error', error);
         }
     }
